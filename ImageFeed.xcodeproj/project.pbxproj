@@ -62,9 +62,9 @@
 		E56059412F630638003DCAC4 /* ImageFeed */ = {
 			isa = PBXGroup;
 			children = (
+				E56059582F635B74003DCAC4 /* ImagesList */,
 				E5E3D72F2F7FE7F7009A1C8E /* SingleImageView */,
 				E5E6C4502F7FB43A00179C51 /* Profile */,
-				E56059582F635B74003DCAC4 /* ImagesList */,
 				E56059422F630638003DCAC4 /* AppDelegate.swift */,
 				E56059442F630638003DCAC4 /* SceneDelegate.swift */,
 				E56059482F630638003DCAC4 /* Main.storyboard */,
