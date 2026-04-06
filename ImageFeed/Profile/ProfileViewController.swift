@@ -8,11 +8,11 @@
 import UIKit
 
 final class ProfileViewController: UIViewController {
-    private var avatarImageView: UIImageView?
-    private var exitButton: UIButton?
-    private var nameLabel: UILabel?
-    private var loginLabel: UILabel?
-    private var statusLabel: UILabel?
+    private weak var avatarImageView: UIImageView?
+    private weak var exitButton: UIButton?
+    private weak var nameLabel: UILabel?
+    private weak var loginLabel: UILabel?
+    private weak var statusLabel: UILabel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +25,6 @@ final class ProfileViewController: UIViewController {
     }
 
     @objc func exitButtonTouched() {
-        print("exitButtonTouched()")
     }
 
     private func createAvatar() {

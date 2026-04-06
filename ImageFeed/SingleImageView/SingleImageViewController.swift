@@ -10,8 +10,7 @@ import UIKit
 final class SingleImageViewController: UIViewController {
     var image: UIImage? {
         didSet {
-            guard isViewLoaded else { return }
-            guard let image else { return }
+            guard isViewLoaded, let image else { return }
             imageView.image = image
             imageView.frame.size = image.size
             rescaleAndCenterImageInScrollView(image: image)
