@@ -62,7 +62,7 @@ extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
         guard let imageListCell = cell as? ImagesListCell else {
-            print("wrong type of cells")
+            L.logger.info("wrong type of cells")
             return UITableViewCell()
         }
         configCell(for: imageListCell, with: indexPath)
