@@ -17,8 +17,8 @@ protocol WebViewViewControllerDelegate: AnyObject {
 }
 
 final class WebViewViewController: UIViewController {
-    @IBOutlet weak var webView: WKWebView!
-    @IBOutlet weak var progressView: UIProgressView!
+    @IBOutlet private weak var webView: WKWebView!
+    @IBOutlet private weak var progressView: UIProgressView!
     weak var delegate: WebViewViewControllerDelegate?
 
     override func viewDidLoad() {
@@ -103,7 +103,7 @@ extension WebViewViewController: WKNavigationDelegate {
             let items = urlComponents.queryItems,
             let codeItem = items.first(where: { $0.name == "code" })
         {
-            L.logger.info("codeItem.value: '\(codeItem.value)'")
+            L.logger.info("codeItem.value: '\(codeItem.value ?? "" )'")
             return codeItem.value
         } else {
             L.logger.error("WebViewViewController.code() -> nil")

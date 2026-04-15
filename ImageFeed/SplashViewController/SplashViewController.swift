@@ -56,7 +56,12 @@ extension SplashViewController {
 
     private func switchToTabBarController() {
         // Получаем экземпляр `window` приложения
-        guard let window = UIApplication.shared.windows.first else {
+        let window = UIApplication
+            .shared
+            .connectedScenes
+            .flatMap { ($0 as? UIWindowScene)?.windows ?? [] }
+            .first { $0.isKeyWindow }
+        guard let window else {
             assertionFailure("Invalid window configuration")
             return
         }

@@ -22,8 +22,8 @@ final class OAuth2Service {
             case .success(let data):
                 do {
                     let authTokenResponse = try self.jsonDecoder.decode(OAuthTokenResponseBody.self, from: data)
-                    self.oAuth2TokenStorage.token = authTokenResponse.access_token
-                    completion(.success(authTokenResponse.access_token))
+                    self.oAuth2TokenStorage.token = authTokenResponse.accessToken
+                    completion(.success(authTokenResponse.accessToken))
                 } catch {
                     let dataStr = String(data: data, encoding: .utf8) ?? ""
                     L.logger.error("Error '\(error)' decoding data: '\(dataStr)'")
