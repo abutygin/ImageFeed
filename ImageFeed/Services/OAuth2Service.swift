@@ -9,7 +9,7 @@ import Foundation
 
 final class OAuth2Service {
     static let shared = OAuth2Service()
-    let oAuth2TokenStorage = OAuth2TokenStorage()
+    private let oAuth2TokenStorage = OAuth2TokenStorage.shared
 
     private lazy var jsonDecoder = JSONDecoder()
 
