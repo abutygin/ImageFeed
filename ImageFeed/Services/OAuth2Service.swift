@@ -11,7 +11,7 @@ final class OAuth2Service {
     static let shared = OAuth2Service()
     private let oAuth2TokenStorage = OAuth2TokenStorage.shared
 
-    private lazy var jsonDecoder = JSONDecoder()
+    private lazy var jsonDecoder = SnakeCaseJSONDecoder()
 
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
         guard let urlRequest = makeOAuthTokenRequest(code: code) else {
