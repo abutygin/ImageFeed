@@ -47,13 +47,15 @@ extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
 
+        UIBlockingProgressHUD.show()
         fetchOAuthToken(code) { result in
+            UIBlockingProgressHUD.dismiss()
             switch result {
             case .success(let token):
                 self.delegate?.didAuthenticate(self)
             case .failure(let error):
                 L.logger.error("fetchOAuthToken failure. Error: '\(error)'")
-                break
+                self.showAuthErrorAlert()
             }
         }
     }
@@ -68,5 +70,18 @@ extension AuthViewController {
         oauth2Service.fetchOAuthToken(code) { result in
             completion(result)
         }
+    }
+}
+
+extension AuthViewController {
+    func showAuthErrorAlert() {
+        let alertController = UIAlertController(
+            title: "Что-то пошло не так",
+            message: "Не удалось войти в систему",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
+        alertController.addAction(okAction)
+        present(alertController, animated: true, completion: nil)
     }
 }
