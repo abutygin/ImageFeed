@@ -6,25 +6,56 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     private weak var avatarImageView: UIImageView?
     private weak var exitButton: UIButton?
     private weak var nameLabel: UILabel?
     private weak var loginLabel: UILabel?
-    private weak var statusLabel: UILabel?
+    private weak var descriptionLabel: UILabel?
+    private var profileImageServiceObserver: NSObjectProtocol?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor(named: "ypBlack")
         createAvatar()
-        createNameLabel(name: "Екатерина Новикова")
-        createLoginLabel(login: "@ekaterina_nov")
-        createStatusLabel(status: "Hello, world!")
+        createNameLabel(name: "Имя не указано")
+        createLoginLabel(login: "@неизвестный_пользователь")
+        createStatusLabel(status: "Профиль не заполнен")
         createExitButton()
         layoutViews()
+        if let profile = ProfileService.shared.profile {
+            updateProfileDetails(profile: profile)
+        }
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
     }
 
-    @objc func exitButtonTouched() {
+    @objc private func exitButtonTouched() {
+        L.logger.info("exitButtonTouched()")
+        LogoutProfileService.shared.logoutAndClean()
+        switchToSplashViewController()
+    }
+
+    func updateProfileDetails(profile: Profile) {
+        if !profile.name.isEmpty {
+            nameLabel?.text = profile.name
+        }
+        if !profile.loginName.isEmpty {
+            loginLabel?.text = profile.loginName
+        }
+        if !profile.bio.isEmpty {
+            descriptionLabel?.text = profile.bio
+        }
     }
 
     private func createAvatar() {
@@ -65,7 +96,7 @@ final class ProfileViewController: UIViewController {
         label.text = status
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = .white
-        statusLabel = label
+        descriptionLabel = label
         view.addSubview(label)
     }
 
@@ -85,7 +116,7 @@ final class ProfileViewController: UIViewController {
         guard let avatarImageView,
               let nameLabel,
               let loginLabel,
-              let statusLabel,
+              let descriptionLabel,
               let exitButton else {
             return
         }
@@ -99,10 +130,58 @@ final class ProfileViewController: UIViewController {
             nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
             loginLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
             loginLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
-            statusLabel.topAnchor.constraint(equalTo: loginLabel.bottomAnchor, constant: 8),
-            statusLabel.leadingAnchor.constraint(equalTo: loginLabel.leadingAnchor),
+            descriptionLabel.topAnchor.constraint(equalTo: loginLabel.bottomAnchor, constant: 8),
+            descriptionLabel.leadingAnchor.constraint(equalTo: loginLabel.leadingAnchor),
             exitButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             exitButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
         ])
+    }
+
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let imageUrl = URL(string: profileImageURL)
+        else { return }
+
+        L.logger.info("imageUrl: \(imageUrl)")
+
+        let placeholderImage = UIImage(systemName: "person.circle.fill")?
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
+
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+        avatarImageView?.kf.indicatorType = .activity
+        avatarImageView?.kf.setImage(
+            with: imageUrl,
+            placeholder: placeholderImage,
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage,
+                .forceRefresh
+            ]) { result in
+
+                switch result {
+                case .success(let value):
+                    L.logger.info("Картинка профиля: \(value.image)")
+                    L.logger.info("Тип кэша: \(value.cacheType)")
+                    L.logger.info("Информация об источнике: \(value.source)")
+                case .failure(let error):
+                    L.logger.error("Ошибка загрузки картинки профиля \(error)")
+                }
+            }
+    }
+
+    private func switchToSplashViewController() {
+        let window = UIApplication
+            .shared
+            .connectedScenes
+            .flatMap { ($0 as? UIWindowScene)?.windows ?? [] }
+            .first { $0.isKeyWindow }
+        guard let window else {
+            assertionFailure("Invalid window configuration")
+            return
+        }
+        window.rootViewController = SplashViewController()
     }
 }
