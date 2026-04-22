@@ -15,9 +15,9 @@ final class SplashViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        view.backgroundColor = UIColor(named: "ypBlack")
         createLogo()
         layoutViews()
-
         if let token = storage.token {
             fetchProfile(token: token)
         } else {
@@ -94,10 +94,8 @@ extension SplashViewController {
 
     private func fetchProfile(token: String) {
         UIBlockingProgressHUD.show()
-        // [weak self]
         profileService.fetchProfile(token) {  result in
             UIBlockingProgressHUD.dismiss()
-//            guard let self = self else { return }
             switch result {
             case .success(let profile):
                 ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in }

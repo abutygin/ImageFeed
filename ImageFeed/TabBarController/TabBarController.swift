@@ -21,6 +21,10 @@ final class TabBarController: UITabBarController {
            image: UIImage(named: "tab_profile_active"),
            selectedImage: nil
         )
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(named: "ypBlack")
+        tabBar.standardAppearance = appearance
         self.viewControllers = [imagesListViewController, profileViewController]
     }
 }

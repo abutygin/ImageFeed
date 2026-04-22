@@ -7,7 +7,6 @@
 
 import UIKit
 import Kingfisher
-import WebKit
 
 final class ProfileViewController: UIViewController {
     private weak var avatarImageView: UIImageView?
@@ -17,43 +16,9 @@ final class ProfileViewController: UIViewController {
     private weak var descriptionLabel: UILabel?
     private var profileImageServiceObserver: NSObjectProtocol?
 
-    private func updateAvatar() {
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let imageUrl = URL(string: profileImageURL)
-        else { return }
-
-        L.logger.info("imageUrl: \(imageUrl)")
-
-        let placeholderImage = UIImage(systemName: "person.circle.fill")?
-            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
-            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
-
-        let processor = RoundCornerImageProcessor(cornerRadius: 35)
-        avatarImageView?.kf.indicatorType = .activity
-        avatarImageView?.kf.setImage(
-            with: imageUrl,
-            placeholder: placeholderImage,
-            options: [
-                .processor(processor),
-                .scaleFactor(UIScreen.main.scale),
-                .cacheOriginalImage,
-                .forceRefresh
-            ]) { result in
-
-                switch result {
-                case .success(let value):
-                    L.logger.info("Картинка профиля: \(value.image)")
-                    L.logger.info("Тип кэша: \(value.cacheType)")
-                    L.logger.info("Информация об источнике: \(value.source)")
-                case .failure(let error):
-                    L.logger.error("Ошибка загрузки картинки профиля \(error)")
-                }
-            }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor(named: "ypBlack")
         createAvatar()
         createNameLabel(name: "Имя не указано")
         createLoginLabel(login: "@неизвестный_пользователь")
@@ -75,15 +40,9 @@ final class ProfileViewController: UIViewController {
         updateAvatar()
     }
 
-    @objc func exitButtonTouched() {
+    @objc private func exitButtonTouched() {
         L.logger.info("exitButtonTouched()")
-        OAuth2TokenStorage.shared.token = nil
-        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
-        let dataTypes = WKWebsiteDataStore.allWebsiteDataTypes()
-        let dateFrom = Date.distantPast
-        WKWebsiteDataStore.default().removeData(ofTypes: dataTypes, modifiedSince: dateFrom) {
-            // Done clearing cache
-        }
+        LogoutProfileService.shared.logoutAndClean()
         switchToSplashViewController()
     }
 
@@ -176,6 +135,41 @@ final class ProfileViewController: UIViewController {
             exitButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             exitButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
         ])
+    }
+
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let imageUrl = URL(string: profileImageURL)
+        else { return }
+
+        L.logger.info("imageUrl: \(imageUrl)")
+
+        let placeholderImage = UIImage(systemName: "person.circle.fill")?
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
+
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+        avatarImageView?.kf.indicatorType = .activity
+        avatarImageView?.kf.setImage(
+            with: imageUrl,
+            placeholder: placeholderImage,
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage,
+                .forceRefresh
+            ]) { result in
+
+                switch result {
+                case .success(let value):
+                    L.logger.info("Картинка профиля: \(value.image)")
+                    L.logger.info("Тип кэша: \(value.cacheType)")
+                    L.logger.info("Информация об источнике: \(value.source)")
+                case .failure(let error):
+                    L.logger.error("Ошибка загрузки картинки профиля \(error)")
+                }
+            }
     }
 
     private func switchToSplashViewController() {

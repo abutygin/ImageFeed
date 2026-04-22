@@ -18,7 +18,7 @@ struct UserResult: Codable {
 }
 
 final class ProfileImageService {
-    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    static let didChangeNotification = Notification.Name("ProfileImageProviderDidChange")
     static let shared = ProfileImageService()
     private (set) var avatarURL: String?
     private let oAuth2TokenStorage = OAuth2TokenStorage.shared
