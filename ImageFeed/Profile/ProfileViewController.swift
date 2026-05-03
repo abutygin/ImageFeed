@@ -70,7 +70,7 @@ final class ProfileViewController: UIViewController {
     }
 
     private func performLogout() {
-        LogoutProfileService.shared.logoutAndClean()
+        ProfileLogoutService.shared.logoutAndClean()
         switchToSplashViewController()
     }
 

@@ -7,8 +7,8 @@
 
 import WebKit
 
-final class LogoutProfileService {
-    static let shared = LogoutProfileService()
+final class ProfileLogoutService {
+    static let shared = ProfileLogoutService()
 
     private init() {}
 
