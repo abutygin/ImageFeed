@@ -54,7 +54,7 @@ final class ImagesListViewController: UIViewController {
         }
         cell.delegate = self
 
-        let likeImage = photo.isLiked ? UIImage(named: "like_on") : UIImage(named: "like_off")
+        let likeImage = UIImage(named: photo.isLiked ? "like_on" : "like_off")
         cell.likeButton.setImage(likeImage, for: .normal)
         if let date = photo.createdAt {
             cell.dateLabel.text = dateFormatter.string(from: date)

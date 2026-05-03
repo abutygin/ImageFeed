@@ -17,6 +17,6 @@ struct Photo {
     let isLiked: Bool
 
     func toggleLike() -> Photo {
-        return Photo(id: id, size: size, createdAt: createdAt, welcomeDescription: welcomeDescription, thumbImageURL: thumbImageURL, largeImageURL: largeImageURL, isLiked: !isLiked)
+        Photo(id: id, size: size, createdAt: createdAt, welcomeDescription: welcomeDescription, thumbImageURL: thumbImageURL, largeImageURL: largeImageURL, isLiked: !isLiked)
     }
 }

@@ -17,12 +17,8 @@ struct PhotoResult: Codable {
     let description: String?
 
     enum CodingKeys: String, CodingKey {
-        case id
-        case width
-        case height
+        case id, width, height, description, urls
         case createdAt = "created_at"
-        case description
-        case urls
         case isLiked = "liked_by_user"
     }
 }
