@@ -14,11 +14,19 @@ final class LogoutProfileService {
 
     func logoutAndClean() {
         OAuth2TokenStorage.shared.token = nil
+        ProfileService.shared.logoutProfile()
+        ImagesListService.shared.logoutImagesList()
+        ProfileImageService.shared.logoutProfileImage()
+        cleanCookies()
+    }
+
+    private func cleanCookies() {
         HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
         let dataTypes = WKWebsiteDataStore.allWebsiteDataTypes()
-        let dateFrom = Date.distantPast
-        WKWebsiteDataStore.default().removeData(ofTypes: dataTypes, modifiedSince: dateFrom) {
-            // Done clearing cache
+        WKWebsiteDataStore.default().fetchDataRecords(ofTypes: dataTypes) { records in
+            records.forEach { record in
+                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
+            }
         }
     }
 }

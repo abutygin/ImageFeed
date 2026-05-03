@@ -58,6 +58,12 @@ final class ProfileImageService {
         task.resume()
     }
 
+    func logoutProfileImage() {
+        task?.cancel()
+        task = nil
+        avatarURL = nil
+    }
+
     private func makeProfileImageRequest(username: String, token: String) -> URLRequest? {
         guard let url = URL(string: Constants.defaultBaseURLString + "/users/\(username)") else {
             return nil

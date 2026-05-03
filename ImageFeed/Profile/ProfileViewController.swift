@@ -15,6 +15,11 @@ final class ProfileViewController: UIViewController {
     private weak var loginLabel: UILabel?
     private weak var descriptionLabel: UILabel?
     private var profileImageServiceObserver: NSObjectProtocol?
+    private var textAnimationLayers = Array<CALayer>()
+    private var imageAnimationLayers = Array<CALayer>()
+    private var animationLayers: Array<CALayer> {
+        textAnimationLayers + imageAnimationLayers
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +30,8 @@ final class ProfileViewController: UIViewController {
         createStatusLabel(status: "Профиль не заполнен")
         createExitButton()
         layoutViews()
+        setupAnimations()
+
         if let profile = ProfileService.shared.profile {
             updateProfileDetails(profile: profile)
         }
@@ -40,8 +47,29 @@ final class ProfileViewController: UIViewController {
         updateAvatar()
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        updateGradientFrames()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeTextGradients()
+        removeImageGradients()
+    }
+
     @objc private func exitButtonTouched() {
         L.logger.info("exitButtonTouched()")
+        let alert = UIAlertController(title: "Пока, Пока!", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Да", style: .default) { _ in
+            self.performLogout()
+        })
+        present(alert, animated: true)
+    }
+
+    private func performLogout() {
         LogoutProfileService.shared.logoutAndClean()
         switchToSplashViewController()
     }
@@ -56,6 +84,7 @@ final class ProfileViewController: UIViewController {
         if !profile.bio.isEmpty {
             descriptionLabel?.text = profile.bio
         }
+        removeTextGradients()
     }
 
     private func createAvatar() {
@@ -153,7 +182,7 @@ final class ProfileViewController: UIViewController {
         avatarImageView?.kf.indicatorType = .activity
         avatarImageView?.kf.setImage(
             with: imageUrl,
-            placeholder: placeholderImage,
+            placeholder: UIImage(named: "avatar"),
             options: [
                 .processor(processor),
                 .scaleFactor(UIScreen.main.scale),
@@ -163,6 +192,7 @@ final class ProfileViewController: UIViewController {
 
                 switch result {
                 case .success(let value):
+                    self.removeImageGradients()
                     L.logger.info("Картинка профиля: \(value.image)")
                     L.logger.info("Тип кэша: \(value.cacheType)")
                     L.logger.info("Информация об источнике: \(value.source)")
@@ -183,5 +213,68 @@ final class ProfileViewController: UIViewController {
             return
         }
         window.rootViewController = SplashViewController()
+    }
+
+    private func makeAnimatedGradient(frame: CGRect, cornerRadius: CGFloat) -> CAGradientLayer {
+        let gradient = CAGradientLayer()
+        gradient.frame = frame
+
+        gradient.locations = [0, 0.1, 0.3]
+        gradient.colors = [
+            UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1).cgColor,
+            UIColor(red: 0.531, green: 0.533, blue: 0.553, alpha: 1).cgColor,
+            UIColor(red: 0.431, green: 0.433, blue: 0.453, alpha: 1).cgColor
+        ]
+        gradient.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient.endPoint = CGPoint(x: 1, y: 0.5)
+        gradient.cornerRadius = cornerRadius
+        gradient.masksToBounds = true
+
+        let gradientChangeAnimation = CABasicAnimation(keyPath: "locations")
+        gradientChangeAnimation.duration = 1.0
+        gradientChangeAnimation.repeatCount = .infinity
+        gradientChangeAnimation.fromValue = [0, 0.1, 0.3]
+        gradientChangeAnimation.toValue = [0, 0.8, 1]
+
+        gradient.add(gradientChangeAnimation, forKey: "locationsChange")
+        return gradient
+    }
+
+    private func addGradient(to view: UIView?, layers: inout Array<CALayer>) {
+        guard let view else {
+            L.logger.info("Profile addGradient view == nil")
+            return
+        }
+        let gradient = makeAnimatedGradient(frame: view.bounds, cornerRadius: view.bounds.height / 2)
+        view.layer.addSublayer(gradient)
+        layers.append(gradient)
+    }
+
+    private func removeTextGradients() {
+        textAnimationLayers.forEach {
+            $0.removeFromSuperlayer()
+        }
+        textAnimationLayers.removeAll()
+    }
+
+    private func removeImageGradients() {
+        imageAnimationLayers.forEach {
+            $0.removeFromSuperlayer()
+        }
+        imageAnimationLayers.removeAll()
+    }
+
+    private func updateGradientFrames() {
+        for layer in animationLayers {
+            layer.frame = layer.superlayer?.bounds ?? .zero
+            layer.cornerRadius = (layer.superlayer?.bounds.height ?? 0) / 2.0
+        }
+    }
+
+    private func setupAnimations() {
+        addGradient(to: avatarImageView, layers: &imageAnimationLayers)
+        addGradient(to: nameLabel, layers: &textAnimationLayers)
+        addGradient(to: loginLabel, layers: &textAnimationLayers)
+        addGradient(to: descriptionLabel, layers: &textAnimationLayers)
     }
 }
