@@ -53,6 +53,12 @@ final class ProfileService {
         task.resume()
     }
 
+    func logoutProfile() {
+        task?.cancel()
+        task = nil
+        profile = nil
+    }
+
     private func makeProfileRequest(token: String) -> URLRequest? {
         let profileUrl = URL(string: Constants.defaultBaseURLString + "/me")
         guard let profileUrl else {
