@@ -14,7 +14,7 @@ struct ProfileResult: Codable {
     let bio: String?
 }
 
-struct Profile {
+public struct ProfileModel {
     let username: String
     let name: String
     let loginName: String
@@ -23,7 +23,7 @@ struct Profile {
 
 final class ProfileService {
     static let shared = ProfileService()
-    private(set) var profile: Profile?
+    private(set) var profile: ProfileModel?
     private let oAuth2TokenStorage = OAuth2TokenStorage.shared
     private lazy var jsonDecoder = SnakeCaseJSONDecoder()
     private let urlSession = URLSession.shared
@@ -31,7 +31,7 @@ final class ProfileService {
 
     private init() {}
 
-    func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
+    func fetchProfile(_ token: String, completion: @escaping (Result<ProfileModel, Error>) -> Void) {
         task?.cancel()
         guard let request = makeProfileRequest(token: token) else {
             completion(.failure(URLError(.badURL)))
@@ -40,7 +40,7 @@ final class ProfileService {
         let task = URLSession.shared.objectTask(for: request, decoder: jsonDecoder) { (result: Result<ProfileResult, Error>) in
             switch result {
             case .success(let result):
-                let profile = Profile(profileResult: result)
+                let profile = ProfileModel(profileResult: result)
                 self.profile = profile
                 completion(.success(profile))
             case .failure(let error):
@@ -73,10 +73,10 @@ final class ProfileService {
     }
 }
 
-extension Profile {
+extension ProfileModel {
     init(profileResult: ProfileResult) {
         username = profileResult.username
-        name = Profile.constructName(profileResult: profileResult)
+        name = ProfileModel.constructName(profileResult: profileResult)
         loginName = "@\(username)"
         bio = profileResult.bio ?? ""
     }
