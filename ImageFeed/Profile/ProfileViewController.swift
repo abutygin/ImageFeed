@@ -8,17 +8,35 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+public protocol ProfileViewControllerProtocol: AnyObject {
+    func updateProfileDetails(profile: ProfileModel)
+    func updateAvatar(avatarURL: String)
+}
+
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
     private weak var avatarImageView: UIImageView?
     private weak var exitButton: UIButton?
     private weak var nameLabel: UILabel?
     private weak var loginLabel: UILabel?
     private weak var descriptionLabel: UILabel?
-    private var profileImageServiceObserver: NSObjectProtocol?
+    
     private var textAnimationLayers = Array<CALayer>()
     private var imageAnimationLayers = Array<CALayer>()
     private var animationLayers: Array<CALayer> {
         textAnimationLayers + imageAnimationLayers
+    }
+    private var presenter: ProfilePresenterProtocol?
+
+    enum AccessibilityId: String {
+        case nameLabel
+        case loginLabel
+        case exitButton
+        case descriptionLabel
+    }
+
+    func configure(_ presenter: ProfilePresenterProtocol) {
+        self.presenter = presenter
+        self.presenter?.view = self
     }
 
     override func viewDidLoad() {
@@ -32,19 +50,7 @@ final class ProfileViewController: UIViewController {
         layoutViews()
         setupAnimations()
 
-        if let profile = ProfileService.shared.profile {
-            updateProfileDetails(profile: profile)
-        }
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                self.updateAvatar()
-            }
-        updateAvatar()
+        presenter?.onViewDidLoad()
     }
 
     override func viewDidLayoutSubviews() {
@@ -59,22 +65,12 @@ final class ProfileViewController: UIViewController {
         removeImageGradients()
     }
 
-    @objc private func exitButtonTouched() {
+    @objc func exitButtonTouched() {
         L.logger.info("exitButtonTouched()")
-        let alert = UIAlertController(title: "Пока, Пока!", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Да", style: .default) { _ in
-            self.performLogout()
-        })
-        present(alert, animated: true)
+        presenter?.onExitButtonTouched(vc: self)
     }
 
-    private func performLogout() {
-        ProfileLogoutService.shared.logoutAndClean()
-        switchToSplashViewController()
-    }
-
-    func updateProfileDetails(profile: Profile) {
+    func updateProfileDetails(profile: ProfileModel) {
         if !profile.name.isEmpty {
             nameLabel?.text = profile.name
         }
@@ -106,6 +102,7 @@ final class ProfileViewController: UIViewController {
         label.textColor = .white
         nameLabel = label
         view.addSubview(label)
+        nameLabel?.accessibilityIdentifier = AccessibilityId.nameLabel.rawValue
     }
 
     private func createLoginLabel(login: String) {
@@ -117,6 +114,7 @@ final class ProfileViewController: UIViewController {
         label.textColor = loginColor
         loginLabel = label
         view.addSubview(label)
+        loginLabel?.accessibilityIdentifier = AccessibilityId.loginLabel.rawValue
     }
 
     private func createStatusLabel(status: String) {
@@ -127,6 +125,7 @@ final class ProfileViewController: UIViewController {
         label.textColor = .white
         descriptionLabel = label
         view.addSubview(label)
+        descriptionLabel?.accessibilityIdentifier = AccessibilityId.descriptionLabel.rawValue
     }
 
     private func createExitButton() {
@@ -139,6 +138,7 @@ final class ProfileViewController: UIViewController {
         }
         button.setImage(exitImage, for: .normal)
         button.addTarget(self, action: #selector(exitButtonTouched), for: .touchUpInside)
+        exitButton?.accessibilityIdentifier = AccessibilityId.exitButton.rawValue
     }
 
     private func layoutViews() {
@@ -166,7 +166,7 @@ final class ProfileViewController: UIViewController {
         ])
     }
 
-    private func updateAvatar() {
+    func updateAvatar(avatarURL: String) {
         guard
             let profileImageURL = ProfileImageService.shared.avatarURL,
             let imageUrl = URL(string: profileImageURL)
@@ -193,26 +193,10 @@ final class ProfileViewController: UIViewController {
                 switch result {
                 case .success(let value):
                     self.removeImageGradients()
-                    L.logger.info("Картинка профиля: \(value.image)")
-                    L.logger.info("Тип кэша: \(value.cacheType)")
-                    L.logger.info("Информация об источнике: \(value.source)")
                 case .failure(let error):
                     L.logger.error("Ошибка загрузки картинки профиля \(error)")
                 }
             }
-    }
-
-    private func switchToSplashViewController() {
-        let window = UIApplication
-            .shared
-            .connectedScenes
-            .flatMap { ($0 as? UIWindowScene)?.windows ?? [] }
-            .first { $0.isKeyWindow }
-        guard let window else {
-            assertionFailure("Invalid window configuration")
-            return
-        }
-        window.rootViewController = SplashViewController()
     }
 
     private func makeAnimatedGradient(frame: CGRect, cornerRadius: CGFloat) -> CAGradientLayer {
