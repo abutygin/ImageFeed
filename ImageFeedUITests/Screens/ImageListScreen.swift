@@ -11,7 +11,7 @@ class ImageListScreen: BaseScreen, Showable {
     private lazy var firstCell = app.tables.cells.firstMatch
 
     func isShowing() -> Bool {
-        return firstCell.isHittable
+        firstCell.isHittable
     }
 
     func tapLikeButton(index: Int = 0) {

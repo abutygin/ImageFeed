@@ -11,7 +11,7 @@ class StartScreen: BaseScreen, Showable {
     private lazy var loginButton = app.buttons["Id.Authenticate"]
 
     func isShowing() -> Bool {
-        return loginButton.isHittable
+        loginButton.isHittable
     }
 
     func tapLoginButton() {

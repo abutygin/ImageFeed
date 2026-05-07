@@ -59,7 +59,7 @@
 		E5F164282FAB8E35009F463E /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F164272FAB8E35009F463E /* StartScreen.swift */; };
 		E5F1642A2FAB8E53009F463E /* BaseScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F164292FAB8E53009F463E /* BaseScreen.swift */; };
 		E5F1642C2FAB8E6F009F463E /* Showable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F1642B2FAB8E6F009F463E /* Showable.swift */; };
-		E5F1642F2FAB8F00009F463E /* CommonWaiter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F1642E2FAB8F00009F463E /* CommonWaiter.swift */; };
+		E5F1642F2FAB8F00009F463E /* ConditionWaiter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F1642E2FAB8F00009F463E /* ConditionWaiter.swift */; };
 		E5F164312FAB9015009F463E /* OAuthScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F164302FAB9015009F463E /* OAuthScreen.swift */; };
 		E5F164332FAB91DA009F463E /* ImageListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F164322FAB91DA009F463E /* ImageListScreen.swift */; };
 		E5F164352FAB925B009F463E /* ImageScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F164342FAB925B009F463E /* ImageScreen.swift */; };
@@ -137,7 +137,7 @@
 		E5F164272FAB8E35009F463E /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
 		E5F164292FAB8E53009F463E /* BaseScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseScreen.swift; sourceTree = "<group>"; };
 		E5F1642B2FAB8E6F009F463E /* Showable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Showable.swift; sourceTree = "<group>"; };
-		E5F1642E2FAB8F00009F463E /* CommonWaiter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonWaiter.swift; sourceTree = "<group>"; };
+		E5F1642E2FAB8F00009F463E /* ConditionWaiter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionWaiter.swift; sourceTree = "<group>"; };
 		E5F164302FAB9015009F463E /* OAuthScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthScreen.swift; sourceTree = "<group>"; };
 		E5F164322FAB91DA009F463E /* ImageListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageListScreen.swift; sourceTree = "<group>"; };
 		E5F164342FAB925B009F463E /* ImageScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageScreen.swift; sourceTree = "<group>"; };
@@ -409,7 +409,7 @@
 			isa = PBXGroup;
 			children = (
 				E5F164292FAB8E53009F463E /* BaseScreen.swift */,
-				E5F1642E2FAB8F00009F463E /* CommonWaiter.swift */,
+				E5F1642E2FAB8F00009F463E /* ConditionWaiter.swift */,
 				E5F1642B2FAB8E6F009F463E /* Showable.swift */,
 			);
 			path = Common;
@@ -619,7 +619,7 @@
 				E5F1642A2FAB8E53009F463E /* BaseScreen.swift in Sources */,
 				E5F164372FAB9AAF009F463E /* ProfileScreen.swift in Sources */,
 				E5F164332FAB91DA009F463E /* ImageListScreen.swift in Sources */,
-				E5F1642F2FAB8F00009F463E /* CommonWaiter.swift in Sources */,
+				E5F1642F2FAB8F00009F463E /* ConditionWaiter.swift in Sources */,
 				E5F164312FAB9015009F463E /* OAuthScreen.swift in Sources */,
 				E5F164352FAB925B009F463E /* ImageScreen.swift in Sources */,
 			);

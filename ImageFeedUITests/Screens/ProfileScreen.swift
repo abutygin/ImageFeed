@@ -9,9 +9,6 @@ import Foundation
 
 class ProfileScreen: BaseScreen, Showable {
     private lazy var logoutButton = app.buttons[ElementIds.exitButton.rawValue]
-    private lazy var nameLabel = app.staticTexts[""]
-    private lazy var loginLabel = app.staticTexts[""]
-    private lazy var descriptionLabel = app.staticTexts[""]
 
     enum ElementIds: String {
         case exitButton
@@ -21,7 +18,7 @@ class ProfileScreen: BaseScreen, Showable {
     }
 
     func isShowing() -> Bool {
-        return logoutButton.isHittable
+        logoutButton.isHittable
     }
 
     func tapLogoutButton() {

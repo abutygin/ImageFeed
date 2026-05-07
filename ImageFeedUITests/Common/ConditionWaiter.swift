@@ -1,5 +1,5 @@
 //
-//  CommonWaiter.swift
+//  ConditionWaiter.swift
 //  ImageFeedUITests
 //
 //  Created by ALEXANDER BUTYGIN on 06.05.2026.
@@ -7,8 +7,8 @@
 
 import XCTest
 
-enum CommonWaiter {
-    static func waitFor(condition: () -> Bool, timeout seconds: TimeInterval, fail: Bool = true, message: String = "") {
+enum ConditionWaiter {
+    static func waitFor(condition: () throws -> Bool, timeout seconds: TimeInterval, fail: Bool = true, message: String = "") {
         let startTime = Date()
         print("waitFor startTime = \(startTime)")
         var currentTime = Date()

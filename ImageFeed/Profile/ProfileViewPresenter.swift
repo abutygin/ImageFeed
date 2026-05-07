@@ -5,7 +5,6 @@
 //  Created by ALEXANDER BUTYGIN on 05.05.2026.
 //
 
-import Foundation
 import UIKit
 
 public protocol ProfilePresenterProtocol {
@@ -30,7 +29,7 @@ final class ProfileViewPresenter: ProfilePresenterProtocol {
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.updateAvatar()
             }
         updateAvatar()

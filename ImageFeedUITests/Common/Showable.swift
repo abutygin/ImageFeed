@@ -23,7 +23,7 @@ extension Showable {
 
     func waitForShowing(for timeoutValue: Double = 60) {
         XCTContext.runActivity(named: "Ожидание Showable \(self), timeout = \(timeoutValue)") { _ in
-            CommonWaiter.waitFor(condition: { self.isShowing() }, timeout: timeoutValue, message: "Ожидание \(type(of: self))")
+            ConditionWaiter.waitFor(condition: { self.isShowing() }, timeout: timeoutValue, message: "Ожидание \(type(of: self))")
         }
     }
 }

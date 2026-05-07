@@ -8,12 +8,17 @@
 import Foundation
 
 class ImageScreen: BaseScreen, Showable {
-    private lazy var shareButton = app.buttons["id.ShareButton"]
+    enum ElementIds: String {
+        case shareButton = "id.ShareButton"
+        case backButton = "Id.BackButton"
+    }
+
+    private lazy var shareButton = app.buttons[ElementIds.shareButton.rawValue]
     private lazy var image = app.scrollViews.images.firstMatch
-    private lazy var navBackButtonWhiteButton = app.buttons["Id.BackButton"]
+    private lazy var navBackButton = app.buttons[ElementIds.backButton.rawValue]
     
     func isShowing() -> Bool {
-        return shareButton.isHittable
+        shareButton.isHittable
     }
 
     func zoomIn() {
@@ -25,6 +30,6 @@ class ImageScreen: BaseScreen, Showable {
     }
 
     func tapBackButton() {
-        navBackButtonWhiteButton.tap()
+        navBackButton.tap()
     }
 }

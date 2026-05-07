@@ -12,9 +12,10 @@ class OAuthScreen: BaseScreen, Showable {
     private lazy var loginTextField = webView.textFields.firstMatch
     private lazy var passwordTextField = webView.secureTextFields.firstMatch
     private lazy var loginButton = webView.buttons["Login"]
+    private lazy var loginLabel = app.webViews.staticTexts["Login"]
 
     func isShowing() -> Bool {
-        return webView.isHittable // && loginTextField.isHittable
+        webView.isHittable && loginLabel.isHittable
     }
 
     func enterLogin(_ text: String) {
@@ -36,7 +37,6 @@ class OAuthScreen: BaseScreen, Showable {
     }
 
     func closeKeyboard() {
-        let emailLabel = app.webViews.staticTexts["Login"]
-        emailLabel.tap()
+        loginLabel.tap()
     }
 }

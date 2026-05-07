@@ -48,10 +48,10 @@ final class ImageFeedUITests: XCTestCase {
 
         let isLikedAtStart = imageListScreen.isImageLiked()
         imageListScreen.tapLikeButton()
-        CommonWaiter.waitFor(condition: { imageListScreen.isImageLiked() != isLikedAtStart }, timeout: 5, fail: false)
+        ConditionWaiter.waitFor(condition: { imageListScreen.isImageLiked() != isLikedAtStart }, timeout: 5, fail: false)
         XCTAssertNotEqual(isLikedAtStart, imageListScreen.isImageLiked(), "like should be changed after tap")
         imageListScreen.tapLikeButton()
-        CommonWaiter.waitFor(condition: { imageListScreen.isImageLiked() == isLikedAtStart }, timeout: 5, fail: false)
+        ConditionWaiter.waitFor(condition: { imageListScreen.isImageLiked() == isLikedAtStart }, timeout: 5, fail: false)
         XCTAssertEqual(isLikedAtStart, imageListScreen.isImageLiked(), "like should be changed back")
 
         imageListScreen.tapImage()
@@ -81,8 +81,8 @@ final class ImageFeedUITests: XCTestCase {
 
 extension ImageFeedUITests {
     func openStartScreen() {
-        CommonWaiter.waitFor(condition: { startScreen.isShowing() || imageListScreen.isShowing() }, timeout: 5, fail: false)
-        if startScreen.isShowing() {
+        ConditionWaiter.waitFor(condition: { startScreen.isShowing() || imageListScreen.isShowing() }, timeout: 5, fail: false)
+        guard startScreen.isShowing() else {
             return
         }
         app.tabBars.buttons.element(boundBy: 1).tap()
@@ -93,7 +93,7 @@ extension ImageFeedUITests {
     }
 
     func openImageList() {
-        CommonWaiter.waitFor(condition: { startScreen.isShowing() || imageListScreen.isShowing() }, timeout: 5, fail: false)
+        ConditionWaiter.waitFor(condition: { startScreen.isShowing() || imageListScreen.isShowing() }, timeout: 5, fail: false)
         if imageListScreen.isShowing() {
             return
         }

@@ -193,9 +193,6 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
                 switch result {
                 case .success(let value):
                     self.removeImageGradients()
-//                    L.logger.info("Картинка профиля: \(value.image)")
-//                    L.logger.info("Тип кэша: \(value.cacheType)")
-//                    L.logger.info("Информация об источнике: \(value.source)")
                 case .failure(let error):
                     L.logger.error("Ошибка загрузки картинки профиля \(error)")
                 }
